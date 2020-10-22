@@ -20,7 +20,7 @@ class Walk():
         self.mAccelerometer = self.robot.getAccelerometer('Accelerometer')  # 获取加速度传感器
         self.mAccelerometer.enable(self.mTimeStep)  # 激活传感器，并以mTimeStep为周期更新数值
         self.fup = 0
-        self.fdown = 0   # 定义两个类变量，用于之后判断机器人是否摔倒  
+        self.fdown = 0   # 定义两个类变量，用于之后判断机器人是否摔倒
 
         self.mGyro = self.robot.getGyro('Gyro')  # 获取陀螺仪
         self.mGyro.enable(self.mTimeStep)  # 激活陀螺仪，并以mTimeStep为周期更新数值
@@ -69,7 +69,7 @@ class Walk():
         self.wait(200)  # 等待200ms
 
         self.isWalking = False  # 初始时机器人未进入行走状态
-        
+
         while True:
             self.checkIfFallen()
             self.mGaitManager.setXAmplitude(0.0)  # 前进为0
@@ -92,7 +92,7 @@ class Walk():
             elif key == 316:  # 如果读取到‘←’，则左转
                 self.mGaitManager.setAAmplitude(-0.5)
             elif key == 314:  # 如果读取到‘→’，则右转
-                self.mGaitManager.setAAmplitude(0.5) 
+                self.mGaitManager.setAAmplitude(0.5)
             self.mGaitManager.step(self.mTimeStep)  # 步态生成器生成一个步长的动作
             self.myStep()  # 仿真一个步长
 
@@ -110,24 +110,24 @@ class Walk():
             self.acc_win1.append(acc[1])
             self.acc_win2.append(acc[2])
             return
-        avg1 = sum(self.acc_win1)/len(self.acc_win1)  # 计算y轴方向滑窗平均值
-        avg2 = sum(self.acc_win2)/len(self.acc_win2)  # 计算z轴方向滑窗平均值
+        avg1 = sum(self.acc_win1) / len(self.acc_win1)  # 计算y轴方向滑窗平均值
+        avg2 = sum(self.acc_win2) / len(self.acc_win2)  # 计算z轴方向滑窗平均值
         if self.acc_last_avg1 != 0 and self.acc_last_avg1 != 0:  # 若上次滑窗均值不为0，则与此时滑窗均值比较
-            if abs(avg1-self.acc_last_avg1) >= 90:  # 若y轴方向上次滑窗均值和本次相差太大，说明起身失败，需强制起身
+            if abs(avg1 - self.acc_last_avg1) >= 90:  # 若y轴方向上次滑窗均值和本次相差太大，说明起身失败，需强制起身
                 self.mMotionManager.playPage(11)  # 倒地起身动作1
                 self.mMotionManager.playPage(10)  # 倒地起身动作0
                 self.mMotionManager.playPage(9)  # 恢复准备行走姿势
                 self.acc_last_avg1 = 0  # 强制起身之后，上次滑窗均值清零防止循环
                 self.acc_last_avg2 = 0  # 强制起身之后，上次滑窗均值清零防止循环
                 return
-        if (acc[1]-avg1) >= 200:  # y轴方向滑窗均值远小于此时y轴方向加速度，机器人后倒
+        if (acc[1] - avg1) >= 200:  # y轴方向滑窗均值远小于此时y轴方向加速度，机器人后倒
             self.mMotionManager.playPage(11)  # 倒地起身动作1
             self.mMotionManager.playPage(9)  # 恢复准备行走姿势
             self.acc_win1 = []  # 起身之后窗清空
             self.acc_win2 = []
             self.acc_last_avg1 = avg1  # 起身之后记录下上次滑窗均值
             self.acc_last_avg2 = avg2
-        elif (acc[1]-avg1) <= -200:  # y轴方向滑窗均值远小于此时y轴方向加速度，机器人前倾
+        elif (acc[1] - avg1) <= -200:  # y轴方向滑窗均值远小于此时y轴方向加速度，机器人前倾
             self.mMotionManager.playPage(10)  # 倒地起身动作0
             self.mMotionManager.playPage(9)  # 恢复准备行走姿势
             self.acc_win1 = []  # 起身之后窗清空
