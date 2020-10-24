@@ -4,7 +4,7 @@
 # @Author       : BobAnkh
 # @Github       : https://github.com/BobAnkh
 # @Date         : 2020-10-22 19:29:56
-# @LastEditTime : 2020-10-24 10:10:27
+# @LastEditTime : 2020-10-24 13:32:59
 # @Description  :
 # @Copyright 2020 BobAnkh
 
@@ -15,18 +15,34 @@ import os
 import random
 import numpy as np
 import json
-from tqdm import tqdm
+# from tqdm import tqdm
 from sklearn.externals import joblib
+import logging
 
 
-def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model'):
+def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model', loglevel='DEBUG'):
+    '''
+    使用SVM+HOG进行训练.
+
+    Args:
+        DATA_TRAIN (str): 训练集地址.
+        model_place (str, optional): 模型存储的位置. Defaults to 'exp2.model'.
+        loglevel (str, optional): log输出的级别,'DEBUG'即全输出,'NOTSET'即无输出. Defaults to 'DEBUG'.
+    '''
+    if loglevel == 'DEBUG':
+        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.DEBUG)
+    else:
+        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.NOTSET)
+    
+    logging.debug('-----------Train start!-----------')
     train_data = []
     categories = os.listdir(DATA_TRAIN)
 
     # load training data
     for category in categories:
         path = os.path.join(DATA_TRAIN, category)
-        print('loading category :' + category)
+        load_cat = 'loading category: ' + category
+        logging.debug(load_cat)
         for file in os.listdir(path):
             img = cv2.imread(os.path.join(path, file))
             img = cv2.resize(img, (60, 80))  # average size
@@ -36,15 +52,16 @@ def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model'):
                      cells_per_block=(2, 2),
                      multichannel=True)
             train_data.append((fd, category))
-
+    # 随机调整数据顺序
     random.shuffle(train_data)
-    print('read data success!')
+    logging.debug('read data success!')
 
     # divide into train and validation
     n = int(0.8 * len(train_data))
     train_set = train_data[:n]
     val_set = train_data[n:]
-    print('Train_set:', len(train_set), 'Val_set:', len(val_set))
+    TV_number = 'Train_set: ' + str(len(train_set)) + ' Val_set: ' + str(len(val_set))
+    logging.debug(TV_number)
 
     # unzip dataset
     X_train, Y_train = map(list, zip(*train_set))
@@ -66,22 +83,42 @@ def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model'):
     for i, correct_result in enumerate(Y_test):
         if predicted[i] == correct_result:
             correct += 1
-    print('Accuracy:', correct / len(X_test))
+    acc = 'Accuracy:' + str(correct / len(X_test))
+    logging.debug(acc)
 
     # save model
     joblib.dump(classifier, model_place)
+    save_place = 'Model saved as ' + model_place
+    logging.debug(save_place)
+    logging.debug('-----------Train end!-----------')
 
 
-def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model'):
+def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
+    '''
+    使用训练好的模型进行测试，返回测试类别名称.
+
+    Args:
+        DATA_TEST (str): 测试集地址.
+        model_place (str, optional): 模型存储的位置. Defaults to 'exp2.model'.
+        loglevel (str, optional): log输出的级别,'DEBUG'即全输出,'NOTSET'即无输出. Defaults to 'DEBUG'.
+
+    Returns:
+        dict: 字典结构(json)的测试图片及其类别名称.
+    '''
+    if loglevel == 'DEBUG':
+        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.DEBUG)
+    else:
+        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.NOTSET)
+    logging.debug('-----------Test start!-----------')
     # Load model
     classifier = joblib.load(model_place)
 
     # Load test data
     test_data = []
     test_imgs = os.listdir(DATA_TEST)
-    print('loading test images')
-    for i in tqdm(range(len(test_imgs))):
-        path = os.path.join(DATA_TEST, test_imgs[i])
+    logging.debug('loading test images')
+    for test_img in test_imgs:
+        path = os.path.join(DATA_TEST, test_img)
         img = cv2.imread(path)
         img = cv2.resize(img, (60, 80))  # average size
         fd = hog(img,
@@ -90,17 +127,22 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model'):
                  cells_per_block=(2, 2),
                  multichannel=True)
         test_data.append(fd)
-
-    print('testing...')
+    # test
+    logging.debug('Test result:')
     test_predict = classifier.predict(test_data)
     test_result = {}
-    for i in tqdm(range(len(test_imgs))):
-        test_result[test_imgs[i]] = test_predict[i]
-    json.dump(test_result, open('exp1_test.json', 'w'))
+    for i, test_img in enumerate(test_imgs):
+        tmp = test_img + ':' + test_predict[i]
+        tmp_dic = {test_img: test_predict[i]}
+        test_result.update(tmp_dic)
+        logging.debug(tmp)
+    logging.debug('-----------Test end!-----------')
+    return test_result
 
 
 if __name__ == '__main__':
-    DATA_TRAIN = 'Data/Train'
-    #DATA_TEST = 'Data/Test'
+    DATA_TRAIN = 'data/train'
+    DATA_TEST = 'data/test'
     SVM_HOG_TRAIN(DATA_TRAIN)
-    #SVM_HOG_TEST(DATA_TEST)
+    test_result = SVM_HOG_TEST(DATA_TEST)
+    print(test_result)
