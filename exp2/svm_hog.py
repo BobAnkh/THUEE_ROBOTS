@@ -4,7 +4,7 @@
 # @Author       : BobAnkh
 # @Github       : https://github.com/BobAnkh
 # @Date         : 2020-10-22 19:29:56
-# @LastEditTime : 2020-10-22 19:55:31
+# @LastEditTime : 2020-10-24 10:10:27
 # @Description  :
 # @Copyright 2020 BobAnkh
 
@@ -19,20 +19,20 @@ from tqdm import tqdm
 from sklearn.externals import joblib
 
 
-def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp1.model'):
+def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model'):
     train_data = []
-    categroies = os.listdir(DATA_TRAIN)
+    categories = os.listdir(DATA_TRAIN)
 
     # load training data
-    for category in categroies:
+    for category in categories:
         path = os.path.join(DATA_TRAIN, category)
         print('loading category :' + category)
         for file in os.listdir(path):
             img = cv2.imread(os.path.join(path, file))
-            img = cv2.resize(img, (60, 60))  # average size
+            img = cv2.resize(img, (60, 80))  # average size
             fd = hog(img,
                      orientations=9,
-                     pixels_per_cell=(6, 6),
+                     pixels_per_cell=(5, 5),
                      cells_per_block=(2, 2),
                      multichannel=True)
             train_data.append((fd, category))
@@ -41,7 +41,7 @@ def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp1.model'):
     print('read data success!')
 
     # divide into train and validation
-    n = int(0.7 * len(train_data))
+    n = int(0.8 * len(train_data))
     train_set = train_data[:n]
     val_set = train_data[n:]
     print('Train_set:', len(train_set), 'Val_set:', len(val_set))
@@ -72,7 +72,7 @@ def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp1.model'):
     joblib.dump(classifier, model_place)
 
 
-def SVM_HOG_TEST(DATA_TEST, model_place='exp1.model'):
+def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model'):
     # Load model
     classifier = joblib.load(model_place)
 
@@ -83,10 +83,10 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp1.model'):
     for i in tqdm(range(len(test_imgs))):
         path = os.path.join(DATA_TEST, test_imgs[i])
         img = cv2.imread(path)
-        img = cv2.resize(img, (60, 60))  # average size
+        img = cv2.resize(img, (60, 80))  # average size
         fd = hog(img,
                  orientations=9,
-                 pixels_per_cell=(6, 6),
+                 pixels_per_cell=(5, 5),
                  cells_per_block=(2, 2),
                  multichannel=True)
         test_data.append(fd)
@@ -100,7 +100,7 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp1.model'):
 
 
 if __name__ == '__main__':
-    DATA_TRAIN = '../../image_exp/image_exp/Classification/Data/Train'
-    DATA_TEST = '../../image_exp/image_exp/Classification/Data/Test'
+    DATA_TRAIN = 'Data/Train'
+    #DATA_TEST = 'Data/Test'
     SVM_HOG_TRAIN(DATA_TRAIN)
-    SVM_HOG_TEST(DATA_TEST)
+    #SVM_HOG_TEST(DATA_TEST)
