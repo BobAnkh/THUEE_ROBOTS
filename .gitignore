@@ -1,5 +1,8 @@
 # vscode
 .vscode/
+# data_set
+exp2/Data/
+exp2/exp2.model
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
