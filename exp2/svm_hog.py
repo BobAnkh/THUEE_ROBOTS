@@ -4,7 +4,7 @@
 # @Author       : BobAnkh
 # @Github       : https://github.com/BobAnkh
 # @Date         : 2020-10-22 19:29:56
-# @LastEditTime : 2020-10-31 11:30:17
+# @LastEditTime : 2020-10-31 13:36:33
 # @Description  :
 # @Copyright 2020 BobAnkh
 
@@ -129,15 +129,17 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
 
     # Load test data
     test_data = []
-    test_imgs = os.listdir(DATA_TEST)
+    test_imgs = []
+    test_raw_imgs = os.listdir(DATA_TEST)
+    for test_img in test_raw_imgs:
+        img_path = os.path.join(DATA_TEST, test_img)
+        if re.match(r'.*\.(jpg|jpeg|png)$', img_path):
+            test_imgs.append(test_img)
     logging.debug('loading test images')
     for test_img in test_imgs:
         img_path = os.path.join(DATA_TEST, test_img)
-        if re.match(r'.*\.(jpg|jpeg|png)$', img_path):
-            fd = read_data(img_path)
-            test_data.append(fd)
-        else:
-            continue
+        fd = read_data(img_path)
+        test_data.append(fd)
     # test
     logging.debug('Test result:')
     test_predict = classifier.predict(test_data)
