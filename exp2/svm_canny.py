@@ -4,7 +4,7 @@
 # @Author       : BobAnkh
 # @Github       : https://github.com/BobAnkh
 # @Date         : 2020-10-22 19:29:56
-# @LastEditTime : 2020-10-31 09:08:11
+# @LastEditTime : 2020-10-31 09:27:11
 # @Description  :
 # @Copyright 2020 BobAnkh
 
@@ -16,6 +16,14 @@ import numpy as np
 # from tqdm import tqdm
 from sklearn.externals import joblib
 import logging
+
+
+def read_data(path):
+    img = cv2.imread(path)
+    img = cv2.resize(img, (60, 80))  # average size
+    blurred = cv2.GaussianBlur(img,(5,5),0)
+    fd = cv2.Canny(blurred, 10, 70).reshape(1, -1).squeeze()
+    return fd
 
 
 def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model', loglevel='DEBUG'):
@@ -42,10 +50,7 @@ def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model', loglevel='DEBUG'):
         load_cat = 'loading category: ' + category
         logging.debug(load_cat)
         for file in os.listdir(path):
-            img = cv2.imread(os.path.join(path, file))
-            img = cv2.resize(img, (60, 80))  # average size
-            blurred = cv2.GaussianBlur(img,(5,5),0)
-            fd = cv2.Canny(blurred, 10, 70).reshape(1, -1).squeeze()
+            fd = read_data(os.path.join(path, file))
             train_data.append((fd, category))
     # 随机调整数据顺序
     random.shuffle(train_data)
@@ -113,11 +118,7 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
     test_imgs = os.listdir(DATA_TEST)
     logging.debug('loading test images')
     for test_img in test_imgs:
-        path = os.path.join(DATA_TEST, test_img)
-        img = cv2.imread(path)
-        img = cv2.resize(img, (60, 80))  # average size
-        blurred = cv2.GaussianBlur(img,(5,5),0)
-        fd = cv2.Canny(blurred, 10, 70).reshape(1, -1).squeeze()
+        fd = read_data(os.path.join(DATA_TEST, test_img))
         test_data.append(fd)
     # test
     logging.debug('Test result:')
