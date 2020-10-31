@@ -4,7 +4,7 @@
 # @Author       : BobAnkh
 # @Github       : https://github.com/BobAnkh
 # @Date         : 2020-10-22 19:29:56
-# @LastEditTime : 2020-10-31 09:03:32
+# @LastEditTime : 2020-10-31 09:08:11
 # @Description  :
 # @Copyright 2020 BobAnkh
 
@@ -44,7 +44,7 @@ def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model', loglevel='DEBUG'):
         for file in os.listdir(path):
             img = cv2.imread(os.path.join(path, file))
             img = cv2.resize(img, (60, 80))  # average size
-            blurred = cv2.GaussianBlur(img,(7,7),0)
+            blurred = cv2.GaussianBlur(img,(5,5),0)
             fd = cv2.Canny(blurred, 10, 70).reshape(1, -1).squeeze()
             train_data.append((fd, category))
     # 随机调整数据顺序
@@ -116,7 +116,7 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
         path = os.path.join(DATA_TEST, test_img)
         img = cv2.imread(path)
         img = cv2.resize(img, (60, 80))  # average size
-        blurred = cv2.GaussianBlur(img,(7,7),0)
+        blurred = cv2.GaussianBlur(img,(5,5),0)
         fd = cv2.Canny(blurred, 10, 70).reshape(1, -1).squeeze()
         test_data.append(fd)
     # test
