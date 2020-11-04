@@ -155,13 +155,8 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
     DATA_TRAIN = os.path.join('exp2', 'data', 'train')  # path: exp2/data/train
     DATA_TEST = os.path.join('exp2', 'data', 'test')    # path: exp2/data/test
-=======
-    DATA_TRAIN = os.path.join('data', 'train_6_sort')  # path: data/train_6_sort
-    DATA_TEST = os.path.join('data', 'test')    # path: data/test
->>>>>>> 498c5b6 ( feat(exp2): implement exp2 on robot)
     SVM_HOG_TRAIN(DATA_TRAIN, loglevel='DEBUG')
     test_result = SVM_HOG_TEST(DATA_TEST, loglevel='DEBUG')
     print(test_result)

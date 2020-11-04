@@ -12,7 +12,13 @@ THUEE Course Intelligent Robots Design and Implementation
 
 第2次小实验的相关材料和代码存放在`exp2`目录下，运行代码需要将包含有所有数据集的`data`文件夹置于`exp2`文件夹内，并在`exp2`文件夹下运行
 
-目前总体两类，每类各30个样本图片，可以抽取少数若干张作为测试集，其余留作训练集
+### 测试集
+
+测试集网盘地址：https://cloud.tsinghua.edu.cn/d/09f56de260254633a472/
+
+#### `exp2`测试集
+
+`exp2`测试集分为2类，每类各30个样本图片，可以抽取少数若干张作为测试集，其余留作训练集
 
 `data`文件夹下的文件结构大致如此:
 
@@ -32,3 +38,7 @@ THUEE Course Intelligent Robots Design and Implementation
         `-- ...(省略若干张图片)
 
 ```
+
+#### `exp3`测试集
+
+`exp3`测试集分为6类，每类各100个样本图片
