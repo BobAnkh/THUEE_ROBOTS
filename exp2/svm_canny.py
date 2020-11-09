@@ -4,7 +4,7 @@
 # @Author       : BobAnkh
 # @Github       : https://github.com/BobAnkh
 # @Date         : 2020-10-22 19:29:56
-# @LastEditTime : 2020-10-31 09:27:11
+# @LastEditTime : 2020-10-31 11:09:44
 # @Description  :
 # @Copyright 2020 BobAnkh
 
@@ -33,12 +33,12 @@ def SVM_HOG_TRAIN(DATA_TRAIN, model_place='exp2.model', loglevel='DEBUG'):
     Args:
         DATA_TRAIN (str): 训练集地址.
         model_place (str, optional): 模型存储的位置. Defaults to 'exp2.model'.
-        loglevel (str, optional): log输出的级别,'DEBUG'即全输出,'NOTSET'即无输出. Defaults to 'DEBUG'.
+        loglevel (str, optional): log输出的级别,'DEBUG'即全输出,'INFO'即无输出. Defaults to 'DEBUG'.
     '''
     if loglevel == 'DEBUG':
         logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.DEBUG)
     else:
-        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.NOTSET)
+        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.INFO)
     
     logging.debug('-----------Train start!-----------')
     train_data = []
@@ -100,7 +100,7 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
     Args:
         DATA_TEST (str): 测试集地址.
         model_place (str, optional): 模型存储的位置. Defaults to 'exp2.model'.
-        loglevel (str, optional): log输出的级别,'DEBUG'即全输出,'NOTSET'即无输出. Defaults to 'DEBUG'.
+        loglevel (str, optional): log输出的级别,'DEBUG'即全输出,'INFO'即无输出. Defaults to 'DEBUG'.
 
     Returns:
         dict: 字典结构(json)的测试图片及其类别名称.
@@ -108,7 +108,7 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
     if loglevel == 'DEBUG':
         logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.DEBUG)
     else:
-        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.NOTSET)
+        logging.basicConfig(format="[%(levelname)s]%(message)s", level=logging.INFO)
     logging.debug('-----------Test start!-----------')
     # Load model
     classifier = joblib.load(model_place)
@@ -134,8 +134,8 @@ def SVM_HOG_TEST(DATA_TEST, model_place='exp2.model', loglevel='DEBUG'):
 
 
 if __name__ == '__main__':
-    DATA_TRAIN = 'exp2/data/train'
-    DATA_TEST = 'exp2/data/test'
-    SVM_HOG_TRAIN(DATA_TRAIN)
-    test_result = SVM_HOG_TEST(DATA_TEST)
+    DATA_TRAIN = 'exp2\\data\\train'
+    DATA_TEST = 'exp2\\data\\test'
+    SVM_HOG_TRAIN(DATA_TRAIN, loglevel='INFO')
+    test_result = SVM_HOG_TEST(DATA_TEST, loglevel='INFO')
     print(test_result)
