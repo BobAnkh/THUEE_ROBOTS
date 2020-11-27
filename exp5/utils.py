@@ -6,7 +6,8 @@
 # @Date         : 2020-11-25 21:44:22
 # @LastEditTime : 2020-11-25 23:46:26
 # @Description  :
-
+import cmd_control as cctl
+import send
 
 def get_location():
     '''
@@ -15,8 +16,10 @@ def get_location():
     Returns:
         list: 位置坐标
     '''
+    cmd = "robot1"  # 假定机器人是robot1
+    Location_string = send.send_common(cmd)
+
     location = [4, 1]
-    print("My location:", location)
     return location
 
 
@@ -31,6 +34,18 @@ def walk_step(current_point, next_point):
     Returns:
         int: 1表示成功，0表示失败
     '''
+    
+    location_now = current_point
+
+    while location_now == current_point:
+        cctl.run_action('FastForward')
+        location_now = get_location()
+
+    L = 2
+
+    for i in range(0, L):
+        cctl.run_action('SlowForward')
+
 
     return 1
 
@@ -45,5 +60,12 @@ def turn(angle):
     Returns:
         int: 1表示成功，0表示失败
     '''
+    time = 3
+    if angle > 0:
+        for i in range(0, angle*time):
+            cctl.ran_action('LeftTurn')
+    else:
+        for i in range(0, -angle*time):
+            cctl.ran_action('RightTurn')
 
     return 1
