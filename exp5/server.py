@@ -1,7 +1,7 @@
 import socket
 import time
 
-ip = "183.173.68.184"
+ip = "192.168.43.174"
 post = 5000
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((ip, post))
@@ -27,9 +27,12 @@ def get_common():
                     print("new")
                     num = int(data[5])
                     #print(num)
-                    location = str(loc[num])
+                    # location = str(loc[num])
+                    print('Current location request: ')
+                    location = str(input())
                     print(location)
-                    conn.send(bytes(location+","+location, encoding="utf-8"))
+                    #conn.send(bytes(location+","+location, encoding="utf-8"))
+                    conn.send(bytes(location, encoding="utf-8"))
                     print("sucess?")
                 else:
                     conn.send(bytes("data", encoding="utf-8"))

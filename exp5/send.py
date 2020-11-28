@@ -1,7 +1,7 @@
 import socket
 
 
-ip = "183.173.68.184"
+ip = "192.168.43.104"
 '''This ip is your server machine's ip '''
 port = 5000
 

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 import binascii
 import serial
 import os
