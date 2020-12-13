@@ -51,15 +51,23 @@ def main():
     end_point = [3, 9]
     barrier = [1, 5]
     # 挑选合适的起始点位
-    path_1 = Path.path_finding(start_point, targets[0], barrier)
-    path_2 = Path.path_finding(start_point, targets[1], barrier)
-    path_3 = Path.path_finding(targets[0], end_point, barrier)
-    path_4 = Path.path_finding(targets[1], end_point, barrier)
-    if (len(path_1) + len(path_3)) > 15 and (len(path_1) + len(path_3)) < 21 and (len(path_2) + len(path_4)) > 15 and (len(path_2) + len(path_4)) < 21:
+    if targets[0][1] < 5:
+        target0_point = [targets[0][0], targets[0][1] + 1]
+    else:
+        target0_point = [targets[0][0], targets[0][1] - 1]
+    if targets[1][1] < 5:
+        target1_point = [targets[1][0], targets[1][1] + 1]
+    else:
+        target1_point = [targets[1][0], targets[1][1] - 1]
+    path_1 = Path.path_finding_d_d(start_point, target0_point, barrier)
+    path_2 = Path.path_finding_d(start_point, target1_point, barrier)
+    path_3 = Path.path_finding_d(target0_point, end_point, barrier)
+    path_4 = Path.path_finding_d(target1_point, end_point, barrier)
+    if (len(path_1) + len(path_3)) > 12 and (len(path_1) + len(path_3)) < 19 and (len(path_2) + len(path_4)) > 12 and (len(path_2) + len(path_4)) < 19:
         if len(path_1) > len(path_2):
             targets = [targets[1], targets[0]]
     else:
-        if (len(path_2) + len(path_4)) > 15 and (len(path_2) + len(path_4)) < 21:
+        if (len(path_2) + len(path_4)) > 12 and (len(path_2) + len(path_4)) < 19:
             targets = [targets[1], targets[0]]
     # 计算起始朝向
     # face_direction: 0表示向上，1表示向右，2表示向下，3表示向左
@@ -78,10 +86,10 @@ def main():
         detect_point = [targets[0][0], targets[0][1] + 1]
     else:
         detect_point = [targets[0][0], targets[0][1] - 1]
-    path_vertices = Path.path_finding(start_point, detect_point, barrier)
+    path_vertices = Path.path_finding_d(start_point, detect_point, barrier)
     current_direction, current_location = Path.walk_to_target(path_vertices, face_direction)
     current_direction, target_block = stair_detect.stair_detect(current_direction, targets[0], current_location)
-    path_vertices = Path.path_finding(current_location, target_block, barrier)
+    path_vertices = Path.path_finding_d(current_location, target_block, barrier)
     current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
     # 朝向
     step = [
@@ -117,10 +125,10 @@ def main():
             detect_point = [targets[1][0], targets[1][1] + 1]
         else:
             detect_point = [targets[1][0], targets[1][1] - 1]
-        path_vertices = Path.path_finding(current_location, detect_point, barrier)
+        path_vertices = Path.path_finding_d(current_location, detect_point, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, face_direction)
         current_direction, target_block = stair_detect.stair_detect(current_direction, targets[1], current_location)
-        path_vertices = Path.path_finding(current_location, target_block, barrier)
+        path_vertices = Path.path_finding_d(current_location, target_block, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
         # 朝向
         step = [
@@ -158,7 +166,7 @@ def main():
                 utils.moveright()
         # 抓取
         utils.down_stairs()
-        path_vertices = Path.path_finding(current_location, end_point, barrier)
+        path_vertices = Path.path_finding_d(current_location, end_point, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
         utils.solute()
     else:
@@ -176,7 +184,7 @@ def main():
         else:
             utils.moveright()
         utils.down_stairs()
-        path_vertices = Path.path_finding(current_location, end_point, barrier)
+        path_vertices = Path.path_finding_d(current_location, end_point, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
         utils.solute()
 
