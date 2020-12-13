@@ -11,6 +11,8 @@ import Path
 import svm_hog
 import stair_detect
 import os
+import canny_pokemon_pos
+import cv2
 
 
 def des_position(number):
@@ -53,11 +55,11 @@ def main():
     path_2 = Path.path_finding(start_point, targets[1], barrier)
     path_3 = Path.path_finding(targets[0], end_point, barrier)
     path_4 = Path.path_finding(targets[1], end_point, barrier)
-    if (len(path_1) + len(path_3)) > 11 and (len(path_1) + len(path_3)) < 17 and (len(path_2) + len(path_4)) > 11 and (len(path_2) + len(path_4)) < 17:
+    if (len(path_1) + len(path_3)) > 15 and (len(path_1) + len(path_3)) < 21 and (len(path_2) + len(path_4)) > 15 and (len(path_2) + len(path_4)) < 21:
         if len(path_1) > len(path_2):
             targets = [targets[1], targets[0]]
     else:
-        if (len(path_2) + len(path_4)) > 11 and (len(path_2) + len(path_4)) < 17:
+        if (len(path_2) + len(path_4)) > 15 and (len(path_2) + len(path_4)) < 21:
             targets = [targets[1], targets[0]]
     # 计算起始朝向
     # face_direction: 0表示向上，1表示向右，2表示向下，3表示向左
@@ -143,6 +145,18 @@ def main():
         current_direction = need_direction
         # 上台阶
         utils.go_upstairs()
+        for turn in range(3):
+            img_path = '/home/xilinx/jupyter_notebooks/final/animal_upstair.jpg'
+            os.system(f'fswebcam  --no-banner --no-overlay --save {img_path} -d /dev/video0 2> /dev/null')
+            img_temp = cv2.imread(img_path)
+            cur_pos = canny_pokemon_pos.canny_pokemon_pos(img_temp)
+            if cur_pos == 2:
+                break
+            elif cur_pos < 2:
+                utils.moveleft()
+            else:
+                utils.moveright()
+        # 抓取
         utils.down_stairs()
         path_vertices = Path.path_finding(current_location, end_point, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
@@ -150,6 +164,17 @@ def main():
     else:
         # 上台阶
         utils.go_upstairs()
+            for turn in range(3):
+        img_path = '/home/xilinx/jupyter_notebooks/final/animal_upstair.jpg'
+        os.system(f'fswebcam  --no-banner --no-overlay --save {img_path} -d /dev/video0 2> /dev/null')
+        img_temp = cv2.imread(img_path)
+        cur_pos = canny_pokemon_pos.canny_pokemon_pos(img_temp)
+        if cur_pos == 2:
+            break
+        elif cur_pos < 2:
+            utils.moveleft()
+        else:
+            utils.moveright()
         utils.down_stairs()
         path_vertices = Path.path_finding(current_location, end_point, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
