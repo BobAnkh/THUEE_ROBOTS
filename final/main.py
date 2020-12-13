@@ -33,6 +33,21 @@ def des_position(number):
     return des_pos
 
 
+def des_to_target(destination):
+    dtt_dict = {
+        '[2, 2]': [2, 1],
+        '[2, 5]': [2, 6],
+        '[2, 8]': [2, 9],
+        '[5, 2]': [5, 1],
+        '[5, 5]': [5, 6],
+        '[5, 8]': [4, 8],
+        '[8, 2]': [8, 1],
+        '[8, 5]': [8, 6],
+        '[8, 8]': [8, 9]
+    }
+    return dtt_dict[str(destination)]
+
+
 animal_label = [
         'kabi', 'jienigui', 'miaowazhongzi', 'pikachu', 'yibu',
         'xiaohuolong'
@@ -51,14 +66,8 @@ def main():
     end_point = [3, 9]
     barrier = [1, 5]
     # 挑选合适的起始点位
-    if targets[0][1] < 5:
-        target0_point = [targets[0][0], targets[0][1] + 1]
-    else:
-        target0_point = [targets[0][0], targets[0][1] - 1]
-    if targets[1][1] < 5:
-        target1_point = [targets[1][0], targets[1][1] + 1]
-    else:
-        target1_point = [targets[1][0], targets[1][1] - 1]
+    target0_point = des_to_target(targets[0])
+    target1_point = des_to_target(targets[1])
     path_1 = Path.path_finding_d_d(start_point, target0_point, barrier)
     path_2 = Path.path_finding_d(start_point, target1_point, barrier)
     path_3 = Path.path_finding_d(target0_point, end_point, barrier)
@@ -82,13 +91,10 @@ def main():
     else:
         raise SystemExit('Wrong Start Point!')
     # 确定台阶侧面以开始搜寻朝向并抵达正面
-    if targets[0][1] < 5:
-        detect_point = [targets[0][0], targets[0][1] + 1]
-    else:
-        detect_point = [targets[0][0], targets[0][1] - 1]
+    detect_point = des_to_target(targets[0])
     path_vertices = Path.path_finding_d(start_point, detect_point, barrier)
     current_direction, current_location = Path.walk_to_target(path_vertices, face_direction)
-    current_direction, target_block = stair_detect.stair_detect(current_direction, targets[0], current_location)
+    current_direction, target_block = stair_detect.stair_detect(current_direction, targets[0], current_location, barrier)
     path_vertices = Path.path_finding_d(current_location, target_block, barrier)
     current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
     # 朝向
@@ -121,13 +127,10 @@ def main():
     DATA_TEST = '/home/xilinx/jupyter_notebooks/final/animal.jpg'
     temp = svm_hog.SVM_HOG_TEST(DATA_TEST, model_place=svm_model)
     if temp['animal.jpg'] == 'duck':
-        if targets[1][1] < 5:
-            detect_point = [targets[1][0], targets[1][1] + 1]
-        else:
-            detect_point = [targets[1][0], targets[1][1] - 1]
+        detect_point = des_to_target(targets[1])
         path_vertices = Path.path_finding_d(current_location, detect_point, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, face_direction)
-        current_direction, target_block = stair_detect.stair_detect(current_direction, targets[1], current_location)
+        current_direction, target_block = stair_detect.stair_detect(current_direction, targets[1], current_location, barrier)
         path_vertices = Path.path_finding_d(current_location, target_block, barrier)
         current_direction, current_location = Path.walk_to_target(path_vertices, current_direction)
         # 朝向
