@@ -4,7 +4,7 @@
 # @Author       : BobAnkh
 # @Github       : https://github.com/BobAnkh
 # @Date         : 2020-12-09 19:17:14
-# @LastEditTime : 2020-12-12 20:15:23
+# @LastEditTime : 2020-12-13 09:01:36
 # @Description  : 
 from SixClass import six_class
 import Path
@@ -62,7 +62,7 @@ def main():
     print(target_animal)
     # test data
     start_point = [1, 2]
-    targets = des_position(2, 5)
+    targets = des_position([2, 5])
     end_point = [3, 9]
     barrier = [1, 5]
     # 挑选合适的起始点位
